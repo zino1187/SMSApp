@@ -3,15 +3,19 @@ package com.example.zino.smsapp;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    String TAG=this.getClass().getName();
+
     SmsManager smsManager;
     String receiveNum="receiver phone number";
 
@@ -24,13 +28,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void send(View view){
-        if(checkSelfPermission(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_DENIED){
-            String[] permissions={Manifest.permission.SEND_SMS};
+        Log.d(TAG, "현재 이 앱의 SDK 버전은 "+Build.VERSION.SDK_INT);
 
-            requestPermissions(permissions, 2);
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M){
+            Log.d(TAG,"마시멜로 이하 버전입니다");
         }else{
-            sendSMS(receiveNum,"아이가 학교에 도착했어요");
+            Log.d(TAG,"마시멜로 이상 버전입니다");
+            if(checkSelfPermission(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_DENIED){
+                String[] permissions={Manifest.permission.SEND_SMS};
+
+                requestPermissions(permissions, 2);
+            }else{
+                sendSMS(receiveNum,"아이가 학교에 도착했어요");
+            }
         }
+
+
     }
 
     @Override
